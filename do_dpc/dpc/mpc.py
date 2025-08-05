@@ -129,7 +129,7 @@ class MPC(DPC, ABC):
         self.sys_matrices: Optional[MPCSystemMatrices] = None
         self.n_state = n_state
         self.x_cp = cp.Parameter(shape=self.n_state, value=np.zeros(self.n_state))
-        super().__init__(dpc_params, training_data)
+        super().__init__(dpc_params, training_data, **Kwargs)
         self.mpc_cf_gains = self._calculate_mpc_closed_form_solution_matrices()
 
     def calculate_predictor_matrices(self) -> MPCPredictorMatrices:
@@ -177,7 +177,7 @@ class MPC(DPC, ABC):
         """
         return cp.Constant(0.0)
 
-    def get_predictor_constraint_expression(self) -> cp.constraints.Constraint:
+    def get_predictor_constraint_expression(self) -> cp.Constraint:
         r"""
         Calculates and returns the CVXPY constraint for the predictor constraint.
 
@@ -187,7 +187,7 @@ class MPC(DPC, ABC):
             y_f = \Gamma x + H_u u_f
 
         Returns:
-            cp.constraints.Constraint: The CVXPY constraint for the predictor constraint.
+            cp.Constraint: The CVXPY constraint for the predictor constraint.
         """
 
         return (  # type: ignore
